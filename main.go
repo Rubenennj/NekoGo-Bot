@@ -7,15 +7,11 @@ import (
 	"os/signal"
 	"fmt"
 	"syscall"
-)
-
-var (
-    token = ""
-    prefix = "!"
+	"./config"
 )
 
 func main() {
-    client, err := discordgo.New("Bot " + token)
+    client, err := discordgo.New("Bot " + config.Token)
     if err != nil {
         fmt.Println("Failed to create bot session")
         

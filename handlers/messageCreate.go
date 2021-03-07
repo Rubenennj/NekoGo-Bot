@@ -1,9 +1,28 @@
 package handlers
 
 import "github.com/bwmarrin/discordgo"
-import "fmt"
+import "strings"
+import "../config"
 
 func MessageCreate(bot*discordgo.Session, msg*discordgo.MessageCreate) {
+    if msg.Author.Bot == true {
+        return
+    }
     
-    fmt.Println("Receiced message " + msg.Content + " from user " + msg.Author.Username)
+    if strings.HasPrefix(msg.Content, config.Prefix) == false {
+        return
+    }
+    
+    content := strings.Split(strings.TrimSpace(msg.Content[len(config.Prefix):]), " ")
+    
+    cmd, args := strings.ToLower(content[0]), content[1:]
+    
+    command := Commands[cmd]
+    
+    if command.Name == "" {
+        bot.ChannelMessageSend(msg.ChannelID, "Command " + cmd + " not found.")
+        return
+    } else {
+        command.Run(bot, msg, args)
+    }
 }
