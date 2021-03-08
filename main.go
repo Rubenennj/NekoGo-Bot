@@ -4,6 +4,7 @@ import (
     "./handlers"
     "github.com/bwmarrin/discordgo"
     "os"
+    "./commands"
 	"os/signal"
 	"fmt"
 	"syscall"
@@ -31,6 +32,8 @@ func main() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+    
+    fmt.Println(commands.Success)
     
     client.Close()
 }

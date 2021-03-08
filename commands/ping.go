@@ -1,10 +1,12 @@
 package commands
 
-import "../structures"
+import "../handlers"
 import "github.com/bwmarrin/discordgo"
 import "strconv"
 
-var Ping = structures.Command{
+var Success = "All bot commands loaded!"
+
+var ping = handlers.Command{
     Name: "ping", 
     Description: "A ping command", 
     Run: func (bot*discordgo.Session, msg*discordgo.MessageCreate, args []string) {
@@ -22,3 +24,5 @@ var Ping = structures.Command{
         bot.ChannelMessageEdit(msg.ChannelID, m.ID, "Pong! " + strconv.FormatInt(int64(time), 10) + "ms")
     },
 }
+
+var execution = ping.Register()
