@@ -1,7 +1,7 @@
 package main
 
 import (
-    "./handlers"
+    "./events"
     "github.com/bwmarrin/discordgo"
     "os"
     "./commands"
@@ -20,7 +20,7 @@ func main() {
     }
     
     //add msg event handler
-    client.AddHandler(handlers.MessageCreate)
+    client.AddHandler(events.MessageCreate)
     
     err = client.Open()
     if err != nil {
@@ -28,12 +28,13 @@ func main() {
         return
     }
     
+    fmt.Println(commands.Success)
+    
     fmt.Println("Successfully logged in " + client.State.User.Username)
+    
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
-    
-    fmt.Println(commands.Success)
     
     client.Close()
 }
