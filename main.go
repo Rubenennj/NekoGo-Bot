@@ -6,6 +6,7 @@ import (
     "os"
     "./commands"
 	"os/signal"
+	"./handlers"
 	"fmt"
 	"syscall"
 	"./config"
@@ -31,6 +32,8 @@ func main() {
     fmt.Println(commands.Success)
     
     fmt.Println("Successfully logged in " + client.State.User.Username)
+    
+    handlers.HandleStatus(client)
     
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

@@ -9,8 +9,12 @@ var Commands = map[string]Command{}
 
 type Command struct {
     Name string
-    Desc string
+    Desc string 
+    Examples []string
+    Permissions []string
     OwnerOnly bool 
+    Args int
+    Usages []string
     Run func (*discordgo.Session, *discordgo.MessageCreate, []string)
 }
 

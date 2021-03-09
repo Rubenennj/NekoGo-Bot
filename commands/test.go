@@ -4,22 +4,27 @@ import (
     "github.com/bwmarrin/discordgo"
     "../functions"
     "../structures"
-    "strings"
 )
 
 var Perms = structures.Command{
-    Name: "perms",
-    Desc: "Return user perms",
-    OwnerOnly: false,
+    Name: "test",
+    Desc: "Test command",
+    Permissions: []string{
+        "ADMINISTRATOR",
+    },
+    Args: 1,
+    Examples: []string{"@Ruben", "392609934744748032"},
+    Usages: []string{"<user>"},
+    OwnerOnly: true,
     Run: func (bot *discordgo.Session, msg *discordgo.MessageCreate, args []string) {
-        perms, err := functions.MemberPermissions(bot, msg.GuildID, msg.Author.ID)
+        user, err := functions.FindUser(bot, args[0])
         
         if err != nil {
             bot.ChannelMessageSend(msg.ChannelID, err.Error())
             return
         }
         
-        bot.ChannelMessageSend(msg.ChannelID, msg.Author.Username + " Permissions:\n" + strings.Join(functions.Goof(perms), ", "))
+        bot.ChannelMessageSend(msg.ChannelID, `Found: ` + user.Username)
     },
 }
 
