@@ -12,6 +12,8 @@ import (
 	"./config"
 )
 
+var Uptime = 0 
+
 func main() {
     client, err := discordgo.New("Bot " + config.Token)
     if err != nil {
@@ -29,7 +31,7 @@ func main() {
         return
     }
     
-    fmt.Println(commands.Success)
+    commands.Load()
     
     fmt.Println("Successfully logged in " + client.State.User.Username)
     

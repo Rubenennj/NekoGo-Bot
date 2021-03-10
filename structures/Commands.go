@@ -9,9 +9,13 @@ var Commands = map[string]Command{}
 
 type Command struct {
     Name string
+    Category string
     Desc string 
     Examples []string
+    Info string
+    Staff bool 
     Permissions []string
+    Fields []string
     OwnerOnly bool 
     Args int
     Usages []string

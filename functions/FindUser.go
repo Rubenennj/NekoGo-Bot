@@ -15,7 +15,7 @@ func FindUser (bot *discordgo.Session, arg string) (*discordgo.User, error) {
         user, err := bot.User(id)
         
         if err != nil {
-            return nil, errors.New("Unknown User")
+            return nil, err
         } else {
             return user, nil
         }
@@ -23,11 +23,11 @@ func FindUser (bot *discordgo.Session, arg string) (*discordgo.User, error) {
         user, err := bot.User(arg)
         
         if err != nil {
-            return nil, errors.New("Unknown User")
+            return nil, err
         } else {
             return user, nil
         }
     } else {
-        return nil, errors.New("Unknown User")
+        return nil, errors.New("???")
     }
 }

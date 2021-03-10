@@ -1,3 +1,10 @@
 package commands 
 
-var Success = "All commands loaded"
+import "./developer"
+import "fmt"
+import "./info"
+
+func Load() {
+    fmt.Println(developer.Success)
+    fmt.Println(info.Success)
+}

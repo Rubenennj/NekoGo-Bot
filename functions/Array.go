@@ -12,6 +12,18 @@ func Has(array []string, flag string) bool {
     return false
 }
 
+func ArrayMapIncludes(array []string, mapper map[string]string) bool {
+    for _, value := range array {
+        for _, id := range mapper {
+            if value == id {
+                return true
+            }
+        }
+    }
+    
+    return false
+}
+
 func Goof(array []string) []string {
     for i, value := range array {
         array[i] = strings.Title(strings.Replace(strings.ToLower(value), "_", " ", -1))
