@@ -24,6 +24,7 @@ func main() {
     
     //add msg event handler
     client.AddHandler(events.MessageCreate)
+    client.AddHandler(events.MessageReactionAdd)
     
     err = client.Open()
     if err != nil {

@@ -26,13 +26,20 @@ var TestCommand = structures.Command{
     },
     Category: "developer",
     Run: func (bot *discordgo.Session, msg *discordgo.MessageCreate, args []string) {
-        user, err := functions.FindUser(bot, args[0])
-        if err != nil {
-            bot.ChannelMessageSend(msg.ChannelID, err.Error())
-            return
+        m, _ := bot.ChannelMessageSend(msg.ChannelID, "React to this message")
+        
+        collector := &functions.ReactionCollector{
+            MessageID: m.ID,
+            Time: 60,
+            Filter: func (r*discordgo.MessageReactionAdd) bool {
+                return msg.Author.ID == r.UserID
+            },
+            OnAdd: func (r*discordgo.MessageReactionAdd) {
+                bot.ChannelMessageSend(msg.ChannelID, "You reacted with " + r.Emoji.MessageFormat())
+            },
         }
         
-        bot.ChannelMessageSend(msg.ChannelID, "User: " + user.Username)
+        collector.Start()
     },
 }
 

@@ -9,6 +9,31 @@ import (
     "time"
 )
 
+func Attach(bot *discordgo.Session, msg *discordgo.MessageCreate, messageID string) {
+    c := functions.ReactionCollector{
+        Filter: func (r *discordgo.MessageReactionAdd) bool {
+            return msg.Author.ID == r.UserID && r.Emoji.Name == "❌"
+        },
+        Max: 1,
+        Time: 10, 
+        MessageID: messageID,
+        OnAdd: func (r *discordgo.MessageReactionAdd) {
+            bot.ChannelMessageDelete(msg.ChannelID, messageID)
+            functions.ReactionCollectors[messageID].Stop()
+        },
+        OnEnd: func () {
+            bot.MessageReactionsRemoveEmoji(msg.ChannelID, messageID, "❌")
+        },
+    }
+    
+    err := bot.MessageReactionAdd(msg.ChannelID, messageID, "❌")
+    if err != nil {
+        return
+    }
+    
+    c.Start()
+}
+
 func CommandCheck (bot *discordgo.Session, msg *discordgo.MessageCreate, args []string, command *structures.Command, sendMessage bool) (bool, error) {
     if command.OwnerOnly == true && config.Owner != msg.Author.ID {
         return false, nil
@@ -44,6 +69,9 @@ func ArgsHandler (bot *discordgo.Session, msg *discordgo.MessageCreate, args []s
             Name: msg.Author.Username + "#" + msg.Author.Discriminator,
             IconURL: msg.Author.AvatarURL("4096"),
         },
+        Footer: &discordgo.MessageEmbedFooter{
+            Text: "Tap to dismiss. | Made with DiscordGo",
+        },
         Title: "Missing Arguments",
         Description: msg.Author.Mention() + " you did not give the `" + command.Fields[len(args)] + "` argument.",
         Thumbnail: &discordgo.MessageEmbedThumbnail{
@@ -71,17 +99,16 @@ func ArgsHandler (bot *discordgo.Session, msg *discordgo.MessageCreate, args []s
         })
     }
     
-    if command.Info != "" {
-        embed.Footer = &discordgo.MessageEmbedFooter{
-            Text: command.Info,
-        }
-    }
-    
     if len(fields) > 0 {
         embed.Fields = fields
     }
     
-    bot.ChannelMessageSendEmbed(msg.ChannelID, &embed)
+    m, err := bot.ChannelMessageSendEmbed(msg.ChannelID, &embed)
+    if err != nil {
+        return
+    }
+    
+    Attach(bot, msg, m.ID)
 }
 
 func StaffHandler (bot *discordgo.Session, msg *discordgo.MessageCreate, command *structures.Command) {
@@ -92,6 +119,9 @@ func StaffHandler (bot *discordgo.Session, msg *discordgo.MessageCreate, command
             Name: msg.Author.Username + "#" + msg.Author.Discriminator,
             IconURL: msg.Author.AvatarURL("4096"),
         },
+        Footer: &discordgo.MessageEmbedFooter{
+            Text: "Tap to dismiss. | Made with DiscordGo",
+        },
         Title: "Missing Permissions",
         Description: msg.Author.Mention() + " You need to be a staff member to use `" + command.Name + "`.",
         Thumbnail: &discordgo.MessageEmbedThumbnail{
@@ -99,5 +129,10 @@ func StaffHandler (bot *discordgo.Session, msg *discordgo.MessageCreate, command
         },
     }
     
-    bot.ChannelMessageSendEmbed(msg.ChannelID, &embed)
+    m, err := bot.ChannelMessageSendEmbed(msg.ChannelID, &embed)
+    if err != nil {
+        return 
+    }
+     
+    Attach(bot, msg, m.ID)
 }

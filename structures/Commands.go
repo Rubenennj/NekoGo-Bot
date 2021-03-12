@@ -11,6 +11,7 @@ type Command struct {
     Name string
     Category string
     Desc string 
+    Aliases []string 
     Examples []string
     Info string
     Staff bool 

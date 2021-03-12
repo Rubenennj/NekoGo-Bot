@@ -111,3 +111,38 @@ func AddMessages (key string, value int) error {
     
     return nil 
 }
+
+func DatabaseSortByCount (mapper map[string]*Data) []string {
+    intMap := map[string]int{}
+    
+    for str, data := range mapper {
+        intMap[str] = data.MessageCount
+    }
+    
+    array := SortMapStringInt(intMap)
+    
+    return array 
+}
+
+func DatabaseGetKeysWith (k string) (map[string]*Data, error) {
+    byted := []byte(k)
+    
+    m := map[string]*Data{}
+    
+    err := config.Database.Scan(byted, func (key []byte) error {
+        data, err := DatabaseGet(string(key))
+        if err != nil {
+            return err 
+        }
+        
+        m[string(key)] = data 
+        
+        return nil 
+    })
+    
+    if err != nil {
+        return nil, err 
+    }
+    
+    return m, nil 
+}
