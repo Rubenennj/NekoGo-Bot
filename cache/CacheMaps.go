@@ -13,3 +13,5 @@ var Channels = map[string]*discordgo.Channel{}
 var Users = map[string]*discordgo.User{} 
 
 var Messages = map[string]*discordgo.MessageCreate{}
+
+var Presences = map[string]*discordgo.PresenceUpdate{} 

@@ -6,7 +6,6 @@ import (
     "os"
     "./commands"
 	"os/signal"
-	"./handlers"
 	"fmt"
 	"syscall"
 	"./config"
@@ -22,9 +21,14 @@ func main() {
         return
     }
     
-    //add msg event handler
+    //add event handlers 
+    client.AddHandler(events.Ready)
+    client.AddHandler(events.PresenceUpdate)
     client.AddHandler(events.MessageCreate)
     client.AddHandler(events.MessageReactionAdd)
+    
+    client.Identify.Intents = discordgo.IntentsAll 
+    client.State.TrackPresences = false 
     
     err = client.Open()
     if err != nil {
@@ -35,8 +39,6 @@ func main() {
     commands.Load()
     
     fmt.Println("Successfully logged in " + client.State.User.Username)
-    
-    handlers.HandleStatus(client)
     
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

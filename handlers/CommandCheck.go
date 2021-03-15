@@ -10,28 +10,20 @@ import (
 )
 
 func Attach(bot *discordgo.Session, msg *discordgo.MessageCreate, messageID string) {
-    c := functions.ReactionCollector{
-        Filter: func (r *discordgo.MessageReactionAdd) bool {
-            return msg.Author.ID == r.UserID && r.Emoji.Name == "❌"
-        },
-        Max: 1,
-        Time: 10, 
-        MessageID: messageID,
-        OnAdd: func (r *discordgo.MessageReactionAdd) {
-            bot.ChannelMessageDelete(msg.ChannelID, messageID)
-            functions.ReactionCollectors[messageID].Stop()
-        },
-        OnEnd: func () {
-            bot.MessageReactionsRemoveEmoji(msg.ChannelID, messageID, "❌")
-        },
-    }
-    
     err := bot.MessageReactionAdd(msg.ChannelID, messageID, "❌")
     if err != nil {
-        return
+        return 
     }
     
-    c.Start()
+    _, err = functions.AwaitReaction(bot, 15, messageID, func (r*discordgo.MessageReactionAdd) bool {
+        return r.Emoji.Name == "❌" && r.UserID == msg.Author.ID 
+    })
+    
+    if err != nil && err.Error() == "timeout" {
+        bot.MessageReactionRemove(msg.ChannelID, messageID, "❌", bot.State.User.ID)
+    } else {
+        bot.ChannelMessageDelete(msg.ChannelID, messageID) 
+    }
 }
 
 func CommandCheck (bot *discordgo.Session, msg *discordgo.MessageCreate, args []string, command *structures.Command, sendMessage bool) (bool, error) {

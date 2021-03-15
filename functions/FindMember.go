@@ -4,6 +4,7 @@ import (
     "github.com/bwmarrin/discordgo"
     "../utils"
     "errors"
+    "../cache"
 )
 
 func FindMember (bot *discordgo.Session, guildID string, arg string) (*discordgo.Member, error) {
@@ -28,6 +29,17 @@ func FindMember (bot *discordgo.Session, guildID string, arg string) (*discordgo
             return member, nil
         }
     } else {
-        return nil, errors.New("Query out of Regex")
+        members, err := RequestGuildMembers(bot, guildID, arg, 1)
+        if err != nil {
+            return nil, err 
+        }
+        if len(members) == 0 {
+            return nil, errors.New("Could not find any member with given query")
+        }
+        
+        member := members[0]
+        cache.Members[member.User.ID] = member 
+        
+        return member, nil 
     }
 }
