@@ -27,7 +27,6 @@ func main() {
     client.AddHandler(events.MessageCreate)
     client.AddHandler(events.MessageReactionAdd)
     
-    client.Identify.Intents = discordgo.IntentsAll 
     client.State.TrackPresences = false 
     
     err = client.Open()
