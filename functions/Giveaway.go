@@ -1,15 +1,17 @@
 package functions 
 
-import "github.com/bwmarrin/discordgo"
-import "encoding/json"
-import "../config"
-import "time"
-import "github.com/hako/durafmt"
-import "strings"
-import "math/rand"
-import "fmt"
-import "errors"
-import "strconv"
+import (
+    "github.com/bwmarrin/discordgo"
+    "encoding/json"
+    "../config"
+    "time"
+    "github.com/hako/durafmt"
+    "strings"
+    "math/rand"
+    "fmt"
+    "errors"
+    "strconv"
+)
 
 type Giveaway struct {
     Title string `json:title`
